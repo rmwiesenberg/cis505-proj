@@ -102,7 +102,8 @@ namespace ProjTests
         public void TestDijkstraUndirected()
         {
             var path44 = _graph.Dijkstra(_v4, _v4);
-            Assert.Equals(path44, path44);
+            Assert.AreEqual(path44, path44);
+            
         }
     }
 }
