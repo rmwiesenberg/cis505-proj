@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -69,6 +70,26 @@ namespace Proj
             path = new Path(vertices, Cost + weight, $"{Name} -({weight})-> {next}");
 
             return true;
+        }
+        
+        public override bool Equals( object? obj)
+        {
+            return obj is Path path && Vertices.SequenceEqual(path.Vertices) && path.Cost == Cost;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Vertices, Cost);
+        }
+
+        public static bool operator ==(Path left, Path right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Path left, Path right)
+        {
+            return !Equals(left, right);
         }
     }
 }
