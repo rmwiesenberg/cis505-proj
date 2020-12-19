@@ -50,9 +50,9 @@ namespace Proj
                     .Where(nextVertex => !visited.ContainsKey(nextVertex)))
                 {
                     shortest.Value.TryMakeNext(nextVertex, out var path); 
-                    if (toVisit.ContainsKey(nextVertex))
+                    if (toVisit.TryGetValue(nextVertex, out var toVisitPath))
                     {
-                        if (path.Cost < toVisit[nextVertex].Cost)
+                        if (path.Cost < toVisitPath.Cost)
                         {
                             toVisit[nextVertex] = path;
                         }
