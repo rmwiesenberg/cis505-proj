@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using Proj;
 
@@ -17,9 +18,7 @@ namespace ProjTests
         private Vertex _v9;
         private Vertex _v10;
 
-        private Graph _graph;
 
-        
         [SetUp]
         public void SetUp()
         {
@@ -46,8 +45,6 @@ namespace ProjTests
             _v7.Connect(_v8, 59, bidirectional:true);
             _v8.Connect(_v9, 4, bidirectional:true);
             _v9.Connect(_v10, 12, bidirectional:true);
-            
-            _graph = new Graph(new []{_v1, _v2, _v3, _v4, _v5, _v6, _v7, _v8, _v9, _v10});
         }
 
         [Test]
@@ -101,8 +98,39 @@ namespace ProjTests
         [Test]
         public void TestDijkstraUndirected()
         {
-            var path44 = _graph.Dijkstra(_v4, _v4);
-            Assert.Equals(path44, path44);
+            // test full-blown version of Dijkstra
+            var expected = new Dictionary<Vertex, Path> {{_v4, new Path(_v4)}};
+            expected[_v4].TryMakeNext(_v8, out var tov8);
+            expected.Add(_v8, tov8);
+            expected[_v8].TryMakeNext(_v9, out var tov9);
+            expected.Add(_v9, tov9);
+            expected[_v4].TryMakeNext(_v5, out var tov5);
+            expected.Add(_v5, tov5);
+            expected[_v4].TryMakeNext(_v1, out var tov1);
+            expected.Add(_v1, tov1);
+            expected[_v4].TryMakeNext(_v3, out var tov3);
+            expected.Add(_v3, tov3);
+            expected[_v9].TryMakeNext(_v10, out var tov10);
+            expected.Add(_v10, tov10);
+            expected[_v3].TryMakeNext(_v7, out var tov7);
+            expected.Add(_v7, tov7);
+            expected[_v10].TryMakeNext(_v6, out var tov6);
+            expected.Add(_v6, tov6);
+            expected[_v1].TryMakeNext(_v2, out var tov2);
+            expected.Add(_v2, tov2);
+
+            var actual = new Dictionary<Vertex, Path>();
+            foreach (var (vertex, shortestPath) in _v4.Dijkstra())
+            {
+                actual.Add(vertex, shortestPath);
+
+                // test iterable
+                Assert.IsTrue(_v4.Dijkstra(vertex, out var dijkstra));
+                Assert.AreEqual(expected[vertex], dijkstra);
+            }
+
+            // test full
+            Assert.AreEqual(expected, actual);
         }
     }
 }
